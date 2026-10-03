@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flash Sale · PHONE-X</title>
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--text:#14171c;--muted:#667085;--line:#e4e7ec;--brand:#4f46e5;--brand-text:#fff;
+--ok:#16a34a;--bad:#dc2626;--warn:#d97706;--info:#2563eb;--gray:#6b7280}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--text:#e8eaee;--muted:#98a2b3;--line:#2a303a;
+--brand:#818cf8;--brand-text:#0e1116;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24;--info:#60a5fa;--gray:#9ca3af}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--line);background:var(--card)}
+h1{font-size:20px;margin:0}
+h2{font-size:15px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.sub{color:var(--muted);font-size:13px}
+main{max-width:1150px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.full{grid-column:1/-1}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:4px 10px;border-radius:999px;font-size:13px;border:1px solid var(--line);color:var(--muted)}
+.pill.ok{color:var(--ok);border-color:var(--ok)}
+.pill.bad{color:var(--bad);border-color:var(--bad);font-weight:600}
+.big{font-size:56px;font-weight:700;line-height:1}
+.big small{font-size:20px;color:var(--muted);font-weight:500}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0}
+.bar>div{height:100%;background:var(--brand);width:0;transition:width .3s}
+.wh{display:grid;grid-template-columns:60px 1fr 70px;gap:10px;align-items:center;font-size:13px;margin:6px 0}
+.wh .bar{margin:0;height:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chiplabel{font-size:12px;color:var(--muted);margin-top:14px;text-transform:uppercase;letter-spacing:.04em}
+.badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;color:#fff}
+.AVAILABLE{background:var(--brand)}.RESERVED{background:var(--warn)}.PAYMENT_PENDING{background:var(--info)}.CONFIRMED{background:var(--ok)}
+.EXPIRED{background:var(--gray)}.CANCELLED{background:var(--bad)}.PAYMENT_FAILED{background:#be185d}
+.REFUND_PENDING{background:var(--warn)}.REFUNDED{background:#0d9488}
+.chip{font-size:13px;border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.row>*{flex:1 1 auto}
+.row>.narrow{flex:0 0 110px}
+button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--brand)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--brand);color:var(--brand-text);border-color:var(--brand);font-weight:600}
+button.danger{color:var(--bad)}
+.order{margin-top:14px;padding:12px;border:1px dashed var(--line);border-radius:10px}
+.order .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.timer{font-size:13px;color:var(--muted)}
+ol.hist{margin:10px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.msg{margin-top:10px;font-size:14px;min-height:20px}
+.msg.good{color:var(--ok)}.msg.err{color:var(--bad)}.msg.info{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.stat b{display:block;font-size:20px}.stat span{font-size:12px;color:var(--muted)}
+.tiles .stat b{font-size:26px}
+#log{height:200px;overflow:auto;font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
+#log div{padding:1px 0;border-bottom:1px solid transparent}
+.check{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px}
+.check input{width:auto}
+
+/* protections */
+.prot{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.prot{grid-template-columns:1fr}}
+.p{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px}
+.pcount{font-size:28px;font-weight:700;min-width:48px;text-align:center;display:inline-block}
+.pcount.bump{animation:bump .6s}
+@keyframes bump{30%{transform:scale(1.35);color:var(--brand)}}
+.pname{font-weight:600;font-size:14px;line-height:1.25}
+.pdesc{font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
+
+/* confirmed animation */
+.celebrate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:50}
+.celebrate[hidden]{display:none}
+.ccard{background:var(--card);border:1px solid var(--ok);border-radius:16px;padding:22px 36px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+.ctitle{font-size:20px;font-weight:700;color:var(--ok);margin-top:4px}
+.csub{font-size:13px;color:var(--muted)}
+.checkmark{width:72px;height:72px}
+.check-circle{fill:none;stroke:var(--ok);stroke-width:2;stroke-dasharray:151;stroke-dashoffset:151;animation:draw .6s ease forwards}
+.check-mark{fill:none;stroke:var(--ok);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:36;stroke-dashoffset:36;animation:draw .4s .45s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.confetti{position:fixed;left:50%;top:45%;width:9px;height:14px;border-radius:2px;opacity:0;animation:burst 1.7s ease-out forwards}
+@keyframes burst{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
+@media (prefers-reduced-motion:reduce){
+  .confetti{display:none}
+  .ccard{animation:none}
+  .check-circle,.check-mark{animation:none;stroke-dashoffset:0}
+  .pcount.bump{animation:none}
+}
+
+/* product card */
+.product{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px;margin-bottom:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.phone{width:92px;height:auto;flex:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.pinfo{flex:1 1 220px;min-width:0}
+.ptitle{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--brand);color:var(--brand-text)}
+.pdescr{margin:6px 0 8px;color:var(--muted);font-size:13.5px}
+.specs{margin:0;padding-left:16px;font-size:13px;color:var(--muted)}
+.pleft{margin-top:10px;font-weight:700;font-size:14px;color:var(--ok)}
+.pleft.low{color:var(--warn)}
+.pleft.out{color:var(--bad)}
+.pnote{margin-top:4px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Flash Sale · PHONE-X</h1>
+    <div class="sub">Never sell a unit that does not exist</div>
+  </div>
+  <div class="pills">
+    <span id="serverPill" class="pill">connecting…</span>
+    <span id="invPill" class="pill">invariant: …</span>
+  </div>
+</header>
+
+<main>
+  <!-- Stock -->
+  <section class="card">
+    <h2>Live stock</h2>
+    <div class="big"><span id="avail">–</span> <small>of <span id="total">–</span> left</small></div>
+    <div class="bar"><div id="availBar"></div></div>
+    <div id="whs"></div>
+    <div class="chiplabel">Units (always add up to the total)</div>
+    <div class="chips" id="unitChips"></div>
+    <div class="chiplabel">Orders that ended</div>
+    <div class="chips" id="endChips"></div>
+  </section>
+
+  <!-- Customer -->
+  <section class="card">
+    <h2>Be a customer</h2>
+
+    <div class="product">
+      <svg class="phone" viewBox="0 0 120 220" role="img" aria-label="PHONE-X smartphone illustration">
+        <defs>
+          <linearGradient id="phoneScreen" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#6366f1"/><stop offset="0.55" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+        <rect x="4" y="60" width="3" height="26" rx="1.5" fill="#374151"/>
+        <rect x="113" y="80" width="3" height="40" rx="1.5" fill="#374151"/>
+        <rect x="8" y="4" width="104" height="212" rx="22" fill="#111827"/>
+        <rect x="14" y="10" width="92" height="200" rx="17" fill="url(#phoneScreen)"/>
+        <rect x="44" y="17" width="32" height="9" rx="4.5" fill="#111827"/>
+        <circle cx="70" cy="21.5" r="2.2" fill="#374151"/>
+        <text x="60" y="104" text-anchor="middle" font-family="system-ui,sans-serif" font-size="17" font-weight="800" fill="#ffffff">PHONE-X</text>
+        <text x="60" y="122" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" letter-spacing="2" fill="#e0e7ff">FLASH DROP</text>
+        <rect x="42" y="190" width="36" height="3.5" rx="1.75" fill="#ffffff" opacity="0.7"/>
+      </svg>
+      <div class="pinfo">
+        <div class="ptitle">PHONE-X <span class="tag">Flash drop</span></div>
+        <p class="pdescr">One drop, a fixed number of phones, and when they are gone they are gone.</p>
+        <ul class="specs">
+          <li>6.7-inch OLED display</li>
+          <li>50 MP camera</li>
+          <li>5,000 mAh battery</li>
+          <li>256 GB storage</li>
+        </ul>
+        <div class="pleft" id="pLeft">Checking stock…</div>
+        <div class="pnote">Sample product for this demo. Up to <span id="pMax">5</span> per order.</div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:0">
+      <div><label for="userId">Your user id</label><input id="userId" autocomplete="off"></div>
+      <div class="narrow"><label for="qty">Units</label>
+        <select id="qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+    </div>
+    <div class="row">
+      <button class="primary" id="btnBuy">Buy now</button>
+      <button id="btnRetry" disabled title="Same Idempotency-Key as the last buy">Retry same request</button>
+    </div>
+    <div class="msg info" id="buyMsg">Click “Buy now” to reserve your units.</div>
+
+    <div class="order" id="orderBox" hidden>
+      <div class="top">
+        <div><span class="mono" id="oId"></span><br><span id="oWh" class="sub"></span></div>
+        <span class="badge" id="oState"></span>
+      </div>
+      <div class="timer" id="oTimer"></div>
+      <div class="row">
+        <button id="btnPay">1. Start payment</button>
+        <button id="btnOk" class="primary">2. Payment success</button>
+        <button id="btnDup" disabled>Send same callback again</button>
+      </div>
+      <div class="row">
+        <button id="btnFail">Payment failed</button>
+        <button id="btnCancel" class="danger">Cancel order</button>
+        <button id="btnLateOne" disabled title="Works once the order has expired, failed or been cancelled">Pay anyway (late)</button>
+      </div>
+      <div class="msg info" id="orderMsg"></div>
+      <ol class="hist" id="hist"></ol>
+    </div>
+  </section>
+
+  <!-- Stress test -->
+  <section class="card">
+    <h2>Stress test</h2>
+    <div class="row">
+      <div>
+        <label for="nBuyers">Buyers clicking at once</label>
+        <select id="nBuyers">
+          <option>100</option><option>500</option><option selected>1000</option><option>5000</option><option>10000</option>
+        </select>
+      </div>
+      <div>
+        <label for="conc" title="Browsers allow only about 6 connections to one server at a time, so extra requests queue up. For true concurrency use scripts/load_test.py">Requests in flight</label>
+        <select id="conc"><option>20</option><option selected>50</option><option>100</option></select>
+      </div>
+      <div>
+        <label for="qtyMode">Units per order</label>
+        <select id="qtyMode"><option value="one">1 each</option><option value="mixed">mixed 1 to 3</option></select>
+      </div>
+    </div>
+    <div class="check"><input type="checkbox" id="autopay" checked><label for="autopay" style="margin:0">Winners pay (80% success, some fail, some never pay) and 1 in 10 paid orders is cancelled and refunded. About 1 in 10 buyers also double-clicks.</label></div>
+    <div class="row">
+      <button class="primary" id="btnStress">Start stress test</button>
+      <button id="btnLate" disabled title="After the reservation time passes, the buyers who never paid pay anyway">Send late payments</button>
+      <button id="btnReset" title="Needs the server started with FAULT_INJECTION=1">Reset sale</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="sSent">0</b><span>buyers sent</span></div>
+      <div class="stat"><b id="sWon">0</b><span>reserved</span></div>
+      <div class="stat"><b id="sOut">0</b><span>no stock</span></div>
+      <div class="stat"><b id="sOther">0</b><span>other</span></div>
+    </div>
+    <div class="bar"><div id="stressBar"></div></div>
+    <div class="msg info" id="stressMsg"></div>
+  </section>
+
+  <!-- Performance -->
+  <section class="card">
+    <h2>Performance · last stress test</h2>
+    <div class="stats tiles">
+      <div class="stat"><b id="pfRps">–</b><span>requests / second</span></div>
+      <div class="stat"><b id="pfP50">–</b><span>p50 response (ms)</span></div>
+      <div class="stat"><b id="pfP95">–</b><span>p95 response (ms)</span></div>
+      <div class="stat"><b id="pfTime">–</b><span>total time (s)</span></div>
+    </div>
+    <div class="sub" id="pfMore" style="margin-top:10px">Run a stress test to measure.</div>
+    <div class="sub" style="margin-top:8px">p50: half of the requests were answered faster than this. p95: 95 out of 100 were faster.
+      Response time is measured by the server. Speed depends on your computer.</div>
+  </section>
+
+  <!-- Protections -->
+  <section class="card">
+    <h2>Protections that fired</h2>
+    <div class="prot">
+      <div class="p"><b class="pcount" id="pReplay">0</b>
+        <div><div class="pname">Duplicate requests replayed</div><div class="pdesc">Same Idempotency-Key: original order returned, no second unit taken</div></div></div>
+      <div class="p"><b class="pcount" id="pDup">0</b>
+        <div><div class="pname">Duplicate callbacks blocked</div><div class="pdesc">Same payment event_id seen again: ignored</div></div></div>
+      <div class="p"><b class="pcount" id="pRefund">0</b>
+        <div><div class="pname">Late payments sent to refund</div><div class="pdesc">Money arrived after the order expired, failed or was cancelled</div></div></div>
+      <div class="p"><b class="pcount" id="pExpired">0</b>
+        <div><div class="pname">Reservations expired</div><div class="pdesc">Not paid in time: units returned to stock</div></div></div>
+    </div>
+    <div class="sub" style="margin-top:10px">Counts since the last “Reset sale”. The first two are kept in server memory, so they restart from 0 if the server restarts.</div>
+  </section>
+
+  <!-- Explain -->
+  <section class="card">
+    <h2>What to look for</h2>
+    <ul style="margin:0;padding-left:18px;color:var(--muted);font-size:14px">
+      <li>However many buyers you send, the stock never goes below 0, and the unit chips always add up to the total.</li>
+      <li><b>Retry same request</b> returns the same order. No second unit is taken.</li>
+      <li><b>Send same callback again</b> is ignored as a duplicate.</li>
+      <li>Orders of several units are all-or-nothing. When one warehouse is short, the order is <b>split</b> across warehouses.</li>
+      <li>Orders nobody pays for expire and the units go back on sale.</li>
+      <li><b>Cancel &amp; refund</b> on a paid order puts the units back on sale at once, then the refund finishes a moment later.</li>
+      <li>After orders expire, <b>Send late payments</b> sends the money to the refund list instead of selling stock that is gone.</li>
+    </ul>
+  </section>
+
+  <section class="card full">
+    <h2>Activity log</h2>
+    <div id="log"></div>
+  </section>
+</main>
+
+<!-- shown when a payment is confirmed -->
+<div class="celebrate" id="celebrate" hidden>
+  <div class="ccard">
+    <svg class="checkmark" viewBox="0 0 52 52" aria-hidden="true">
+      <circle class="check-circle" cx="26" cy="26" r="24"/>
+      <path class="check-mark" d="M14 27 l8 8 l16 -18"/>
+    </svg>
+    <div class="ctitle">Order confirmed!</div>
+    <div class="csub" id="cSub"></div>
+  </div>
+  <div id="confetti"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const UNIT_STATES = ["AVAILABLE", "RESERVED", "PAYMENT_PENDING", "CONFIRMED"];
+const END_STATES = ["EXPIRED", "CANCELLED", "PAYMENT_FAILED", "REFUND_PENDING", "REFUNDED"];
+const ACTIVE = ["RESERVED", "PAYMENT_PENDING"];
+const NOT_PAID_END = ["EXPIRED", "CANCELLED", "PAYMENT_FAILED"];
+
+let currentOrderId = null;
+let currentState = null;
+let expiresAt = 0;
+let lastBuy = null;          // {user, key, qty} of the last buy click
+let lastCallback = null;     // {event_id, order_id, status} of the last callback sent
+let stressRunning = false;
+let latePayers = [];         // stress-test orders that never paid
+let counting = false;        // true while a stress test is counting requests
+let reqCount = 0;
+let pollTimer = null;
+
+// ------------------------------------------------------------ helpers
+async function api(method, path, body, headers) {
+  if (counting && method === "POST") reqCount++;
+  const res = await fetch(path, {
+    method,
+    headers: Object.assign({ "Content-Type": "application/json" }, headers || {}),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* no body */ }
+  return { status: res.status, data };
+}
+
+function log(text, kind) {
+  const d = document.createElement("div");
+  const t = new Date().toLocaleTimeString();
+  d.textContent = t + "  " + text;
+  if (kind === "bad") d.style.color = "var(--bad)";
+  if (kind === "good") d.style.color = "var(--ok)";
+  $("log").prepend(d);
+  while ($("log").children.length > 200) $("log").lastChild.remove();
+}
+
+function setMsg(id, text, kind) {
+  const el = $(id);
+  el.textContent = text;
+  el.className = "msg " + (kind || "info");
+}
+
+function randomUser() { return "user-" + Math.random().toString(36).slice(2, 8); }
+function newKey(user) { return "web-" + user + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6); }
+
+// ------------------------------------------------------------ confirmed animation
+let celebrateTimer = null;
+function celebrate(orderId) {
+  const box = $("celebrate");
+  const conf = $("confetti");
+  $("cSub").textContent = "Order " + orderId + " is yours.";
+  conf.replaceChildren();
+  const colors = ["#4f46e5", "#16a34a", "#d97706", "#2563eb", "#dc2626", "#eab308"];
+  for (let i = 0; i < 46; i++) {
+    const p = document.createElement("span");
+    p.className = "confetti";
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 120 + Math.random() * 260;
+    p.style.setProperty("--dx", Math.cos(ang) * dist + "px");
+    p.style.setProperty("--dy", Math.sin(ang) * dist + 160 + "px");   // +160: pieces drift down
+    p.style.setProperty("--rot", Math.random() * 720 - 360 + "deg");
+    p.style.background = colors[i % colors.length];
+    p.style.animationDelay = Math.random() * 0.15 + "s";
+    conf.appendChild(p);
+  }
+  box.hidden = true;            // hide then show, so the animation restarts every time
+  void box.offsetWidth;
+  box.hidden = false;
+  clearTimeout(celebrateTimer);
+  celebrateTimer = setTimeout(() => { box.hidden = true; conf.replaceChildren(); }, 2500);
+}
+
+// ------------------------------------------------------------ product card
+function updateProductStock(left, total) {
+  const el = $("pLeft");
+  el.className = "pleft";
+  if (left === 0) { el.textContent = "Sold out"; el.classList.add("out"); }
+  else if (left <= 10) { el.textContent = "Hurry: only " + left + " left"; el.classList.add("low"); }
+  else { el.textContent = left + " of " + total + " left"; }
+}
+
+async function loadConfig() {
+  try {
+    const r = await api("GET", "/config");
+    const max = r.data && r.data.max_quantity;
+    if (!max) return;
+    $("pMax").textContent = max;
+    const sel = $("qty");
+    sel.replaceChildren();
+    for (let i = 1; i <= max; i++) {
+      const o = document.createElement("option");
+      o.textContent = i;
+      sel.appendChild(o);
+    }
+  } catch (e) { /* keep the defaults */ }
+}
+
+// ------------------------------------------------------------ live stock + protections
+const lastCounts = {};
+function setCount(id, value) {
+  const el = $(id);
+  if (lastCounts[id] !== undefined && value > lastCounts[id]) {
+    el.classList.remove("bump");
+    void el.offsetWidth;
+    el.classList.add("bump");
+  }
+  lastCounts[id] = value;
+  el.textContent = value;
+}
+
+function fillChips(containerId, states, counts) {
+  const box = $(containerId);
+  box.replaceChildren();
+  states.forEach((s) => {
+    const c = document.createElement("span");
+    c.className = "chip";
+    const b = document.createElement("span"); b.className = "badge " + s; b.textContent = s;
+    c.append(b, " " + (counts[s] || 0));
+    box.appendChild(c);
+  });
+}
+
+async function refresh() {
+  try {
+    const [inv, chk, met] = await Promise.all([
+      api("GET", "/inventory"), api("GET", "/admin/invariants"), api("GET", "/admin/metrics"),
+    ]);
+    const d = inv.data;
+    $("avail").textContent = d.available_units;
+    updateProductStock(d.available_units, d.total_units);
+    $("total").textContent = d.total_units;
+    $("availBar").style.width = (d.total_units ? (100 * d.available_units / d.total_units) : 0) + "%";
+
+    const whs = $("whs");
+    whs.replaceChildren();
+    d.warehouses.forEach((w) => {
+      const row = document.createElement("div");
+      row.className = "wh";
+      const name = document.createElement("span"); name.textContent = w.id;
+      const bar = document.createElement("div"); bar.className = "bar";
+      const fill = document.createElement("div");
+      fill.style.width = (w.total ? 100 * w.available / w.total : 0) + "%";
+      bar.appendChild(fill);
+      const num = document.createElement("span"); num.className = "mono"; num.textContent = w.available + "/" + w.total;
+      row.append(name, bar, num);
+      whs.appendChild(row);
+    });
+
+    fillChips("unitChips", UNIT_STATES, d.units_by_state);
+    fillChips("endChips", END_STATES, d.orders_by_state);
+
+    const ip = $("invPill");
+    if (chk.data.ok) {
+      ip.className = "pill ok";
+      ip.textContent = "invariant OK · confirmed " + chk.data.confirmed + " / stock " + chk.data.stock + " units";
+    } else {
+      ip.className = "pill bad";
+      ip.textContent = "INVARIANT BROKEN: " + chk.data.problems.join("; ");
+    }
+
+    const m = met.data;
+    setCount("pReplay", m.replayed_requests);
+    setCount("pDup", m.duplicate_callbacks_blocked);
+    setCount("pRefund", m.late_payments_refunded);
+    setCount("pExpired", m.reservations_expired);
+
+    $("serverPill").className = "pill ok";
+    $("serverPill").textContent = "server online";
+  } catch (e) {
+    $("serverPill").className = "pill bad";
+    $("serverPill").textContent = "server offline";
+  }
+}
+
+// ------------------------------------------------------------ order card
+async function loadOrder() {
+  if (!currentOrderId) return;
+  const r = await api("GET", "/orders/" + currentOrderId);
+  if (r.status !== 200) return;
+  const o = r.data.order;
+  currentState = o.state;
+  expiresAt = o.expires_at;
+  $("orderBox").hidden = false;
+  $("oId").textContent = o.id;
+  const parts = (o.allocations || []).map((a) => a.qty + " from " + a.warehouse_id);
+  $("oWh").textContent = o.quantity + (o.quantity > 1 ? " units" : " unit") + " · " + parts.join(" + ") +
+    ((o.allocations || []).length > 1 ? "  (split across warehouses)" : "");
+  $("oState").textContent = o.state;
+  $("oState").className = "badge " + o.state;
+  const hist = $("hist");
+  hist.replaceChildren();
+  r.data.history.forEach((h) => {
+    const li = document.createElement("li");
+    li.textContent = (h.from_state || "start") + " → " + h.to_state + "  (" + h.reason + ")";
+    hist.appendChild(li);
+  });
+  updateButtons();
+  tick();
+  if (o.state === "REFUND_PENDING") {          // keep checking until the refund finishes
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(loadOrder, 1200);
+  }
+}
+
+function updateButtons() {
+  const live = ACTIVE.includes(currentState);
+  $("btnPay").disabled = currentState !== "RESERVED";
+  $("btnOk").disabled = !live;
+  $("btnFail").disabled = !live;
+  $("btnCancel").disabled = !(live || currentState === "CONFIRMED");
+  $("btnCancel").textContent = currentState === "CONFIRMED" ? "Cancel & refund" : "Cancel order";
+  $("btnLateOne").disabled = !NOT_PAID_END.includes(currentState);
+  $("btnDup").disabled = !lastCallback;
+}
+
+function tick() {
+  const el = $("oTimer");
+  if (!currentOrderId || !currentState) return;
+  if (ACTIVE.includes(currentState)) {
+    const left = Math.max(0, Math.round(expiresAt - Date.now() / 1000));
+    el.textContent = "Reservation expires in " + left + "s";
+    if (left === 0) setTimeout(loadOrder, 1500);   // let the server worker expire it, then reload
+  } else {
+    const t = {
+      CONFIRMED: "Order complete.",
+      REFUND_PENDING: "Cancelled. Units are back on sale. Refund in progress…",
+      REFUNDED: "Cancelled and refunded.",
+      PAYMENT_FAILED: "Payment failed. Units returned to stock.",
+    };
+    el.textContent = t[currentState] || "Units returned to the shelf.";
+  }
+}
+setInterval(tick, 500);
+
+// ------------------------------------------------------------ customer actions
+async function buy(user, key, qty) {
+  const r = await api("POST", "/orders", { user_id: user, quantity: qty || 1 }, { "Idempotency-Key": key });
+  return r.data;
+}
+
+async function onBuy() {
+  const user = $("userId").value.trim() || randomUser();
+  $("userId").value = user;
+  const qty = parseInt($("qty").value, 10) || 1;
+  const key = newKey(user);
+  lastBuy = { user, key, qty };
+  $("btnRetry").disabled = false;
+  const d = await buy(user, key, qty);
+  showBuyResult(d, "Buy " + qty);
+}
+
+async function onRetry() {
+  if (!lastBuy) return;
+  const d = await buy(lastBuy.user, lastBuy.key, lastBuy.qty);
+  showBuyResult(d, "Retry (same key)");
+}
+
+function showBuyResult(d, label) {
+  if (!d) { setMsg("buyMsg", "No answer from the server.", "err"); return; }
+  const texts = {
+    created: ["Reserved! Pay before the timer runs out.", "good"],
+    replayed: ["Same request again: you got your original order back. No extra units were taken.", "good"],
+    already_has_order: ["You already hold an order for this phone.", "info"],
+    sold_out: ["Sold out. Units come back if reservations expire, so try again later.", "err"],
+    insufficient_stock: ["Only " + d.available + " left, and an order is all or nothing. Try fewer units.", "err"],
+    key_conflict: ["That request key was already used for a different request.", "err"],
+    invalid_quantity: ["That quantity is not allowed.", "err"],
+  };
+  const t = texts[d.result] || [String(d.result), "info"];
+  setMsg("buyMsg", t[0], t[1]);
+  const bad = ["sold_out", "insufficient_stock", "key_conflict", "invalid_quantity"].includes(d.result);
+  log(label + " → " + d.result + (d.order ? " " + d.order.id : ""), bad ? "bad" : "good");
+  if (d.order) { currentOrderId = d.order.id; currentState = d.order.state; lastCallback = null; loadOrder(); }
+  refresh();
+}
+
+async function startPayment() {
+  const r = await api("POST", "/orders/" + currentOrderId + "/pay");
+  const res = r.data && r.data.result;
+  log("Start payment → " + res, res === "ok" ? "good" : "bad");
+  setMsg("orderMsg", res === "ok" ? "Payment started (" + r.data.payment_ref + ")." : "Could not start payment: " + res, res === "ok" ? "good" : "err");
+  await loadOrder(); refresh();
+}
+
+async function sendCallback(status, reuse) {
+  let cb;
+  if (reuse && lastCallback) {
+    cb = lastCallback;
+  } else {
+    cb = { event_id: "evt-" + currentOrderId + "-" + status + "-" + Date.now(), order_id: currentOrderId, status };
+  }
+  const r = await api("POST", "/payments/callback", cb);
+  lastCallback = cb;
+  const res = r.data && r.data.result;
+  const good = ["confirmed", "payment_failed_stock_released", "already_confirmed"].includes(res);
+  log("Callback (" + status + (reuse ? ", repeated" : "") + ") → " + res, good ? "good" : (res === "duplicate_ignored" ? "info" : "bad"));
+  const nice = {
+    confirmed: "Payment confirmed. The phone is yours!",
+    duplicate_ignored: "Duplicate callback ignored. Nothing changed.",
+    payment_failed_stock_released: "Payment failed. Units returned to stock.",
+    late_payment_refund_queued: "Payment came too late. The money goes back to the customer (refund queued), and the stock is not sold.",
+    already_confirmed: "Already confirmed.",
+  };
+  setMsg("orderMsg", nice[res] || res, good || res === "duplicate_ignored" ? "good" : "err");
+  if (res === "confirmed") celebrate(currentOrderId);
+  await loadOrder(); refresh();
+}
+
+async function onPayOk() {
+  if (currentState === "RESERVED") await startPayment();
+  await sendCallback("success", false);
+}
+
+async function onCancel() {
+  const r = await api("POST", "/orders/" + currentOrderId + "/cancel");
+  const ok = r.data && r.data.result === "ok";
+  const refund = ok && r.data.refund === "pending";
+  log("Cancel → " + (r.data && r.data.result) + (refund ? " (refund started)" : ""), "info");
+  setMsg("orderMsg",
+    !ok ? "Could not cancel." : refund ? "Order cancelled. The units are back on sale and your refund is on its way." : "Order cancelled. Units returned.",
+    ok ? "good" : "err");
+  await loadOrder(); refresh();
+}
+
+// ------------------------------------------------------------ stress test
+function fmt(n, digits) { return Number(n).toLocaleString(undefined, { maximumFractionDigits: digits }); }
+
+async function onStress() {
+  if (stressRunning) return;
+  const n = parseInt($("nBuyers").value, 10);
+  const conc = parseInt($("conc").value, 10);
+  if (!Number.isFinite(n) || n < 1 || !Number.isFinite(conc) || conc < 1) {
+    setMsg("stressMsg", "Pick how many buyers to send.", "err");
+    return;
+  }
+  stressRunning = true;
+  $("btnStress").disabled = true;
+  $("btnLate").disabled = true;
+  latePayers = [];
+  const autopay = $("autopay").checked;
+  const mixed = $("qtyMode").value === "mixed";
+  const run = Date.now().toString(36);
+  const c = { sent: 0, won: 0, out: 0, other: 0 };
+  let next = 0;
+
+  // mark the server clock so we only measure this run
+  const mark = (await api("GET", "/admin/perf")).data.now;
+  reqCount = 0;
+  counting = true;
+  const t0 = performance.now();
+  setMsg("stressMsg", "Sending " + n + " buyers…", "info");
+  log("Stress test started: " + n + " buyers", "info");
+
+  function paint() {
+    $("sSent").textContent = c.sent; $("sWon").textContent = c.won;
+    $("sOut").textContent = c.out; $("sOther").textContent = c.other;
+    $("stressBar").style.width = (100 * c.sent / n) + "%";
+  }
+
+  async function worker() {
+    while (true) {
+      const i = next++;
+      if (i >= n) return;
+      const user = "stress-" + run + "-" + i;
+      const key = "key-" + user;
+      const qty = mixed ? 1 + Math.floor(Math.random() * 3) : 1;
+      try {
+        let results;
+        if (autopay && Math.random() < 0.1) {
+          // a double-click: the very same request arrives twice at the same moment
+          results = await Promise.all([buy(user, key, qty), buy(user, key, qty)]);
+        } else {
+          results = [await buy(user, key, qty)];
+        }
+        const created = results.find((x) => x.result === "created");
+        if (created) {
+          c.won++;
+          if (autopay) await payOutcome(created.order.id);
+        } else if (results.some((x) => x.result === "sold_out" || x.result === "insufficient_stock")) c.out++;
+        else c.other++;
+      } catch (e) { c.other++; }
+      c.sent++;
+      if (c.sent % 25 === 0) paint();
+    }
+  }
+
+  async function payOutcome(orderId) {
+    const roll = Math.random();
+    if (roll < 0.8) {
+      await api("POST", "/orders/" + orderId + "/pay");
+      const cb = { event_id: "evt-" + orderId + "-ok", order_id: orderId, status: "success" };
+      await api("POST", "/payments/callback", cb);
+      if (Math.random() < 0.3) await api("POST", "/payments/callback", cb);   // duplicate callback
+      if (Math.random() < 0.1) await api("POST", "/orders/" + orderId + "/cancel");   // paid, then cancelled: refund
+    } else if (roll < 0.9) {
+      await api("POST", "/orders/" + orderId + "/pay");
+      await api("POST", "/payments/callback", { event_id: "evt-" + orderId + "-fail", order_id: orderId, status: "failed" });
+    } else {
+      latePayers.push(orderId);          // never pays in time; may pay late (button below)
+    }
+  }
+
+  await Promise.all(Array.from({ length: conc }, worker));
+  counting = false;
+  const secs = (performance.now() - t0) / 1000;
+  paint();
+
+  const perf = (await api("GET", "/admin/perf?since=" + mark)).data;
+  const rps = secs > 0 ? reqCount / secs : 0;
+  $("pfRps").textContent = fmt(rps, 0);
+  $("pfP50").textContent = fmt(perf.p50_ms, 1);
+  $("pfP95").textContent = fmt(perf.p95_ms, 1);
+  $("pfTime").textContent = fmt(secs, 1);
+  $("pfMore").textContent = fmt(reqCount, 0) + " requests sent · p99 " + fmt(perf.p99_ms, 1) +
+    " ms · slowest " + fmt(perf.max_ms, 1) + " ms · average " + fmt(perf.avg_ms, 1) + " ms";
+
+  const chk = await api("GET", "/admin/invariants");
+  const ok = chk.data.ok;
+  setMsg("stressMsg",
+    (ok ? "PASS" : "FAIL") + ": " + n + " buyers in " + secs.toFixed(1) + "s. Confirmed " + chk.data.confirmed +
+    " of " + chk.data.stock + " units. " + (ok ? "Never oversold." : chk.data.problems.join("; ")),
+    ok ? "good" : "err");
+  log("Stress test done in " + secs.toFixed(1) + "s: " + fmt(rps, 0) + " req/s, p50 " + perf.p50_ms + " ms, p95 " + perf.p95_ms +
+    " ms, reserved " + c.won + ", no stock " + c.out + ", invariant " + (ok ? "OK" : "BROKEN"), ok ? "good" : "bad");
+  stressRunning = false;
+  $("btnStress").disabled = false;
+  $("btnLate").disabled = latePayers.length === 0;
+  refresh();
+}
+
+// buyers who never paid now try to pay. Only orders that already expired are used.
+async function onLatePayments() {
+  const ids = latePayers.slice();
+  if (!ids.length) return;
+  $("btnLate").disabled = true;
+  let refunded = 0, notYet = 0, other = 0, i = 0;
+  async function w() {
+    while (i < ids.length) {
+      const id = ids[i++];
+      const o = await api("GET", "/orders/" + id);
+      if (!o.data || !o.data.order) { other++; continue; }
+      if (o.data.order.state !== "EXPIRED") { notYet++; continue; }
+      const r = await api("POST", "/payments/callback", { event_id: "evt-" + id + "-late", order_id: id, status: "success" });
+      if (r.data && r.data.result === "late_payment_refund_queued") refunded++; else other++;
+    }
+  }
+  await Promise.all(Array.from({ length: 10 }, w));
+  if (notYet > 0 && refunded === 0) {
+    setMsg("stressMsg", "Reservations have not expired yet. Wait for the reservation time to pass, then try again.", "info");
+    $("btnLate").disabled = false;
+  } else {
+    latePayers = [];
+    setMsg("stressMsg", refunded + " late payments were sent to the refund list instead of selling stock that is gone." +
+      (notYet ? " (" + notYet + " were not expired yet and were skipped.)" : ""), "good");
+  }
+  log("Late payments: " + refunded + " refunded, " + notYet + " skipped", "info");
+  refresh();
+}
+
+async function onReset() {
+  const r = await api("POST", "/admin/reset");
+  if (r.status === 200) {
+    currentOrderId = null; currentState = null; lastCallback = null; lastBuy = null; latePayers = [];
+    $("orderBox").hidden = true; $("btnRetry").disabled = true; $("btnLate").disabled = true;
+    ["sSent", "sWon", "sOut", "sOther"].forEach((id) => ($(id).textContent = "0"));
+    ["pfRps", "pfP50", "pfP95", "pfTime"].forEach((id) => ($(id).textContent = "–"));
+    $("pfMore").textContent = "Run a stress test to measure.";
+    $("stressBar").style.width = "0";
+    setMsg("buyMsg", "Sale reset. 100 units available.", "good");
+    setMsg("stressMsg", "", "info");
+    log("Sale reset", "info");
+  } else {
+    setMsg("stressMsg", "Reset needs the server to be started with FAULT_INJECTION=1.", "err");
+  }
+  refresh();
+}
+
+// ------------------------------------------------------------ wire up
+$("userId").value = randomUser();
+$("btnBuy").onclick = onBuy;
+$("btnRetry").onclick = onRetry;
+$("btnPay").onclick = startPayment;
+$("btnOk").onclick = onPayOk;
+$("btnDup").onclick = () => sendCallback(lastCallback ? lastCallback.status : "success", true);
+$("btnFail").onclick = async () => { if (currentState === "RESERVED") await startPayment(); await sendCallback("failed", false); };
+$("btnCancel").onclick = onCancel;
+$("btnLateOne").onclick = () => sendCallback("success", false);
+$("btnStress").onclick = onStress;
+$("btnLate").onclick = onLatePayments;
+$("btnReset").onclick = onReset;
+loadConfig();
+refresh();
+setInterval(refresh, 1000);
+</script>
+</body>
+</html>
